@@ -1,0 +1,61 @@
+<html>
+<body>
+<script>
+(function(d, s, id){
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'Messenger'));
+
+window.extAsyncInit = function() {
+	document.getElementById('header').innerHTML = "loaded";
+ 	MessengerExtensions.getUserID(function success(uids) {
+        var psid = uids.psid;
+        document.getElementById('header').innerHTML = "" + psid;
+      }, function error(err) {
+          document.getElementById('header').innerHTML = 'error: ' + err;
+      });
+}
+
+function requestPayment(){
+  MessengerExtensions.requestPaymentCredentials(function success(name, email, cardType, cardLastFourDigits, shippingAddress) {
+        content = "Name : " + name + "<br/>" +
+                  "Email :" + email + "<br/>" +
+                  "cardType:" + cardType + "<br/>" +
+                  "cardLastFourDigits:"+ cardLastFourDigits + "<br/>" +
+                  "shippingAddress:" + JSON.stringify(shippingAddress) + "<br/>";
+
+        document.getElementById('header').innerHTML = content;
+      }, function error(err) {
+
+      },
+      "Punit's Payment",
+      "https://shopbot.ebay.com/",
+      1);
+}
+
+function authorizePayment() {
+  MessengerExtensions.requestAuthorizedPaymentCredentials(function success(paymentCredentials) {
+        document.getElementById('header2').innerHTML = "paymentCredentials : " + paymentCredentials;
+      }, function error(err) {
+        document.getElementById('header2').innerHTML = "Error Occurred : " + JSON.stringify(err);
+      },
+      2.12);
+}
+
+   // MessengerExtensions.getUserID(function success(uids) {
+   //   var psid = uids.psid;
+  //	  document.getElementById('header').innerHTML = "" + psid;
+  //  }, function error(err) {
+ //		document.getElementById('header').innerHTML = 'error: ' + err;
+  //  });
+</script>
+<h1 id="header">result</h1>
+<h1 id="header2"></h1>
+<button onclick="requestPayment()">Get Credentials</button>
+<button onclick="authorizePayment()">Authorize Payment</button>
+
+</body>
+</html>
